@@ -16,6 +16,7 @@ services:
       retries: 5
 
   nodejs-app:
+    container_name: nodejs-app
     build:
       context: .
     ports:
@@ -24,10 +25,20 @@ services:
       - mongodb
     volumes:
       - .:/app
-    # environment:
-    #   - NODE_ENV=production
-    # volumes:
-    #   - .:/app
+
+  # cassandra: 
+  #   image: cassandra:latest 
+  #   container_name: cassandradb 
+  #   hostname: cassandradb
+  #   ports: 
+  #     - "9042:9042" 
+  #   environment: 
+  #     CASSANDRA_SEEDS: "cassandradb"   
+  #     CASSANDRA_CLUSTER_NAME: MyTestCluster 
+  #     CASSANDRA_DC: DC1  
+  #     CASSANDRA_RACK: RACK1 
+  #     CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch  
+  #     CASSANDRA_NUM_TOKENS: 128
 
 volumes:
   mongodata:

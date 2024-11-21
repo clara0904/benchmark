@@ -11,4 +11,4 @@ RUN npm install && \
 
 EXPOSE 3000
 
-ENTRYPOINT ["npx", "ts-node", "src/benchmark.ts"]
+CMD ["npx", "ts-node", "src/benchmark.ts"]
