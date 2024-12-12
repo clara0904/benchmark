@@ -6,7 +6,7 @@ import TempoBenchmark from "./tempo_benchmark";
 import FileGenerator from "./file_generator";
 
 async function getMongoClient(): Promise<MongoClient> {
-    const client: MongoClient = new MongoClient(`mongodb://root:mylittlepassword@mongodb:27017/admin`);
+    const client: MongoClient = new MongoClient(`mongodb://10.0.0.204:27017`);
 
     return client;
 }
@@ -31,24 +31,38 @@ async function runBenchmark(database_benchmark: DatabaseBenchmark): Promise<void
 
     const quantidades: number[] = [];
 
-    for (let i = 10000; i <= 1000000; ) {
-        quantidades.push(i);
-        if (i < 100000) {
-            i += 10000; 
-        } else {
-            i += 100000; 
-        }
-    }
+    quantidades.push(1000000);
 
     await database_benchmark.delete.action();
 
     for (let index in quantidades) {
+        console.log(quantidades[index]);
+        dizerTime();
         insertTrabalho.addTempo(new TempoBenchmark(await database_benchmark.insert.benchmark_in_milliseconds(quantidades[index]), quantidades[index]));
-        removeTrabalho.addTempo(new TempoBenchmark(await database_benchmark.delete.benchmark_in_milliseconds(), quantidades[index]));
+        await sleepOneMinute();
+        dizerTime();        
         readTrabalho.addTempo(new TempoBenchmark(await database_benchmark.read.benchmark_in_milliseconds(), quantidades[index]));
+        await sleepOneMinute();
+        dizerTime();
+        removeTrabalho.addTempo(new TempoBenchmark(await database_benchmark.delete.benchmark_in_milliseconds(), quantidades[index]));
+        await sleepOneMinute();
     }
 
+    dizerTime();
+
     salvarListaString([...insertTrabalho.toString(), ...removeTrabalho.toString(), ...readTrabalho.toString()]);
+}
+
+function dizerTime() {
+    console.log((new Date()).toISOString());
+}
+
+async function sleepOneMinute(){
+    await sleep(60000);
+}
+
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function run(){
